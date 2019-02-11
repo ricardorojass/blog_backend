@@ -1,0 +1,52 @@
+{
+  "articles": [
+    {
+      "id": 1,
+      "title": "Domain Driving Design",
+      "body": "# Domain Driven Design\n---\nPosted by [Ricardo] on February 6, 2019\n\n![alt text](https://via.placeholder.com/800x150?text=DDD \"Domain Drive Design\")\n\n\nLorem, ipsum dolor sit amet consectetur adipisicing elit. Hic voluptatem et possimus distinctio voluptas. Ea nesciunt nemo ullam. Facere deleniti laborum ipsum natus porro omnis quis cumque aspernatur velit labore.\n\n```javascript\nvar test;\ntest = 10000;\n```\n\nTesting paragraph\n\n```javascript\nvar test;\ntest = 10000;\n```\n",
+      "thumbnail": "https://via.placeholder.com/150x100?text=DDD",
+      "img": "https://via.placeholder.com/1000x150?text=DDD",
+      "author": "Ricardo Rojas"
+    },
+    {
+      "id": 2,
+      "title": "Angular with Github pages",
+      "body": "# Domain Driven Design\n---\nPosted by [Ricardo] on February 6, 2019\n\n![alt text](https://via.placeholder.com/800x150?text=DDD \"Domain Drive Design\")\n\n\nLorem, ipsum dolor sit amet consectetur adipisicing elit. Hic voluptatem et possimus distinctio voluptas. Ea nesciunt nemo ullam. Facere deleniti laborum ipsum natus porro omnis quis cumque aspernatur velit labore.\n\n```javascript\nvar test;\ntest = 10000;\n```\n\nTesting paragraph\n\n```javascript\nvar test;\ntest = 10000;\n```\n",
+      "thumbnail": "https://via.placeholder.com/150x100?text=GH Pages",
+      "img": "https://via.placeholder.com/1000x150?text=GH Pages",
+      "author": "Ricardo Rojas"
+    },
+    {
+      "id": 3,
+      "title": "Flex Layout in Angular",
+      "body": "# Domain Driven Design\n---\nPosted by [Ricardo] on February 6, 2019\n\n![alt text](https://via.placeholder.com/800x150?text=DDD \"Domain Drive Design\")\n\n\nLorem, ipsum dolor sit amet consectetur adipisicing elit. Hic voluptatem et possimus distinctio voluptas. Ea nesciunt nemo ullam. Facere deleniti laborum ipsum natus porro omnis quis cumque aspernatur velit labore.\n\n```javascript\nvar test;\ntest = 10000;\n```\n\nTesting paragraph\n\n```javascript\nvar test;\ntest = 10000;\n```\n",
+      "thumbnail": "https://via.placeholder.com/150x100?text=Flex",
+      "img": "https://via.placeholder.com/1000x150?text=Flex",
+      "author": "Ricardo Rojas"
+    },
+    {
+      "id": 4,
+      "title": "Self improvement",
+      "body": "# Domain Driven Design\n---\nPosted by [Ricardo] on February 6, 2019\n\n![alt text](https://via.placeholder.com/800x150?text=DDD \"Domain Drive Design\")\n\n\nLorem, ipsum dolor sit amet consectetur adipisicing elit. Hic voluptatem et possimus distinctio voluptas. Ea nesciunt nemo ullam. Facere deleniti laborum ipsum natus porro omnis quis cumque aspernatur velit labore.\n\n```javascript\nvar test;\ntest = 10000;\n```\n\nTesting paragraph\n\n```javascript\nvar test;\ntest = 10000;\n```\n",
+      "thumbnail": "https://via.placeholder.com/150x100?text=Improvement",
+      "img": "https://via.placeholder.com/1000x150?text=Improvement",
+      "author": "Ricardo Rojas"
+    },
+    {
+      "id": 5,
+      "title": "How to be more confidence",
+      "body": "# Domain Driven Design\n---\nPosted by [Ricardo] on February 6, 2019\n\n![alt text](https://via.placeholder.com/800x150?text=DDD \"Domain Drive Design\")\n\n\nLorem, ipsum dolor sit amet consectetur adipisicing elit. Hic voluptatem et possimus distinctio voluptas. Ea nesciunt nemo ullam. Facere deleniti laborum ipsum natus porro omnis quis cumque aspernatur velit labore.\n\n```javascript\nvar test;\ntest = 10000;\n```\n\nTesting paragraph\n\n```javascript\nvar test;\ntest = 10000;\n```\n",
+      "thumbnail": "https://via.placeholder.com/150x100?text=Confidence",
+      "img": "https://via.placeholder.com/1000x150?text=Confidence",
+      "author": "Ricardo Rojas"
+    },
+    {
+      "id": 6,
+      "title": "From Rails to Angular",
+      "body": "# Domain Driven Design\n---\nPosted by [Ricardo] on February 6, 2019\n\n![alt text](https://via.placeholder.com/800x150?text=DDD \"Domain Drive Design\")\n\n\nLorem, ipsum dolor sit amet consectetur adipisicing elit. Hic voluptatem et possimus distinctio voluptas. Ea nesciunt nemo ullam. Facere deleniti laborum ipsum natus porro omnis quis cumque aspernatur velit labore.\n\n```javascript\nvar test;\ntest = 10000;\n```\n\nTesting paragraph\n\n```javascript\nvar test;\ntest = 10000;\n```\n",
+      "thumbnail": "https://via.placeholder.com/150x100?text=Rails",
+      "img": "https://via.placeholder.com/1000x150?text=Rails",
+      "author": "Ricardo Rojas"
+    }
+  ]
+}

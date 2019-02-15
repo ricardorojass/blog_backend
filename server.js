@@ -6,6 +6,7 @@ const mongoose = require('mongoose')
 const app = express()
 
 const User = require('./models/User')
+const Story = require('./models/Story')
 
 const db = require('./db.json')
 
@@ -17,24 +18,64 @@ app.use(cors())
 app.use(bodyParser.json())
 
 app.get('/articles', (req, res) => {
-  res.status(200).json(db.articles)
-})
-
-app.get('/articles/:id', (req, res) => {
-  res.status(200).json(db.articles[0])
-  // res.send(db.articles[0])
-})
-
-app.post('/register', (req, res) => {
-  const userData = req.body
-  let user = new User(userData)
-
-  user.save((err, result) => {
-    if (err)
-      console.log('saving user error')
-
-    res.sendStatus(200)
+  Story.find({}).then((stories) => {
+    res.send(stories)
   })
+})
+
+app.get('/article/:title', (req, res) => {
+  let title = req.params.title
+  if (!title)
+    return res.status(400).send('Missing URL parameter')
+
+  Story.findOne({
+    title: title
+  })
+    .then(doc => {
+      console.log('then', doc);
+
+      res.json(doc)
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    })
+})
+
+app.get('/:title/edit', (req, res) => {
+  let title = req.params.title
+  if (!title)
+    return res.status(400).send('Missing URL parameter')
+
+  Story.findOne({
+    title: title
+  })
+    .then(doc => {
+      console.log('edit', doc);
+
+      res.json(doc)
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    })
+})
+
+app.post('/article/new', (req, res) => {
+  const storyData = req.body
+  if (!storyData)
+    return res.status(400).send('Request body is mising')
+
+  let model = new Story(req.body)
+  model.save()
+    .then(doc => {
+      if (!doc || doc.length === 0) {
+        return res.status(500).send(doc)
+      }
+
+      res.status(201).json(doc)
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    })
 })
 
 mongoose.connect('mongodb://test:ricardo123@ds139138.mlab.com:39138/blog-ricardo', (err) => {

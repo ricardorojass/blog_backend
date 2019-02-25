@@ -6,8 +6,8 @@ const cors = require('cors');
 const app = express();
 
 const {mongose} = require('./config/mongoose');
-const {User} = require('./models/User.js');
-const {Story} = require('./models/Story.js');
+const {User} = require('./models/user.js');
+const {Story} = require('./models/story.js');
 
 app.use(morgan('dev'));
 app.use(cors());
@@ -57,27 +57,26 @@ app.get('/:title/edit', (req, res) => {
 
 app.post('/stories', (req, res) => {
   const storyData = req.body
-  if (!storyData)
-    return res.status(400).send('Request body is mising')
 
   let model = new Story({
-    title: req.title,
-    body: req.body
-  })
+    title: storyData.title,
+    body: storyData.body,
+  });
+
   model.save().then(doc => {
     if (!doc || doc.length === 0) {
       return res.status(500).send(doc)
     }
 
-    res.status(201).json(doc)
+    res.status(200).json(doc)
   })
   .catch(err => {
-    res.status(500).json(err)
+    res.status(400).json(err)
   })
 })
-
-
 
 app.listen(3000, () => {
   console.log('Started on port 3000');
 });
+
+module.exports = {app};

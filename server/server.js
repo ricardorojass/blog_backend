@@ -13,9 +13,12 @@ app.use(morgan('dev'));
 app.use(cors());
 app.use(bodyParser.json());
 
-app.get('/articles', (req, res) => {
-  Story.find({}).then((stories) => {
-    res.send(stories)
+// GET/stories
+app.get('/stories', (req, res) => {
+  Story.find().then((stories) => {
+    res.send({stories});
+  }, (e) => {
+    res.status(400).send(e);
   });
 });
 
@@ -55,6 +58,7 @@ app.get('/:title/edit', (req, res) => {
     })
 })
 
+// POST/stories
 app.post('/stories', (req, res) => {
   const storyData = req.body
 

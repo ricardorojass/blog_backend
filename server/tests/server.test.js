@@ -4,8 +4,21 @@ const request = require('supertest');
 const {app} = require('./../server');
 const {Story} = require('../models/story');
 
+const stories = [
+  {
+    title: 'First story title',
+    body: 'First story body'
+  },
+  {
+    title: 'Second story title',
+    body: 'Second story body'
+  },
+];
+
 beforeEach((done) => {
-  Story.remove({}).then(() => done());
+  Story.remove({}).then(() => {
+    return Story.insertMany(stories);
+  }).then(() => done());
 });
 
 describe('POST / stories', () => {
@@ -26,7 +39,7 @@ describe('POST / stories', () => {
           return done(err);
         }
 
-        Story.find().then((stories) => {
+        Story.find({title, body}).then((stories) => {
           expect(stories.length).toBe(1);
           expect(stories[0].title).toBe(title);
           expect(stories[0].body).toBe(body);
@@ -46,9 +59,21 @@ describe('POST / stories', () => {
         }
 
         Story.find().then((stories) => {
-          expect(stories.length).toBe(0);
+          expect(stories.length).toBe(2);
           done();
         }).catch((e) => done(e));
       });
   });
+});
+
+describe('GET /stories', () => {
+  it('should get all stories', (done) => {
+    request(app)
+      .get('/stories')
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.stories.length).toBe(2);
+      })
+      .end(done);
+  })
 });

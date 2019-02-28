@@ -77,3 +77,22 @@ describe('GET /stories', () => {
       .end(done);
   })
 });
+
+describe('GET /stories/:title', () => {
+  it('should return story doc', (done) => {
+    request(app)
+      .get(`/stories/${stories[0].title}`)
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.story.title).toBe(stories[0].title);
+      })
+      .end(done);
+  });
+
+  it('should return 404 if story doc not found ', (done) => {
+    request(app)
+      .get('/stories/faketitle')
+      .expect(404)
+      .end(done);
+  });
+});

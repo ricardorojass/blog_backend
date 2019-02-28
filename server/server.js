@@ -22,22 +22,18 @@ app.get('/stories', (req, res) => {
   });
 });
 
-app.get('/article/:title', (req, res) => {
+app.get('/stories/:title', (req, res) => {
   let title = req.params.title
-  if (!title)
-    return res.status(400).send('Missing URL parameter')
 
-  Story.findOne({
-    title: title
-  })
-    .then(doc => {
-      console.log('then', doc);
+  Story.findOne({title: title}).then(story => {
+    if(!story)
+      res.status(404).send({});
 
-      res.json(doc)
+    res.send({story})
     })
     .catch(err => {
-      res.status(500).json(err)
-    })
+      res.status(400).send({});
+    });
 })
 
 app.get('/:title/edit', (req, res) => {
@@ -48,10 +44,12 @@ app.get('/:title/edit', (req, res) => {
   Story.findOne({
     title: title
   })
-    .then(doc => {
-      console.log('edit', doc);
+    .then(story => {
+      if (!story)
+        return res.status(404).send({});
 
-      res.json(doc)
+      console.log('edit', story);
+      res.status(200).send(story);
     })
     .catch(err => {
       res.status(500).json(err)

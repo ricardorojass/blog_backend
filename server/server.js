@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 
 const app = express();
+const port = process.env.PORT || 3000;
 
 const {mongose} = require('./config/mongoose');
 const {User} = require('./models/user.js');
@@ -77,8 +78,8 @@ app.post('/stories', (req, res) => {
   })
 })
 
-app.listen(3000, () => {
-  console.log('Started on port 3000');
+app.listen(port, () => {
+  console.log(`Started on port ${port}`);
 });
 
 module.exports = {app};

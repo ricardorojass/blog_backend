@@ -7,7 +7,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 const {mongose} = require('./config/mongoose');
-const {Story} = require('./models/story.js');
+const {Story} = require('./models/story');
 
 app.use(morgan('dev'));
 app.use(cors());

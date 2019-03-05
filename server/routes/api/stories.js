@@ -1,9 +1,24 @@
 const express = require('express');
-const {Story} = require('../models/Story');
+const {Story} = require('../../models/Story');
 const router = new express.Router();
 
+// Preload article objects on routes with ':article'
+router.param('stories', async (req, res, next, slug) => {
+  try {
+    const story = await Story.findOne({ title: title});
+
+    if (!story) { return res.status(404); }
+
+    req.story = story;
+
+    return next();
+  } catch (e) {
+    return next(e);
+  }
+});
+
 // GET/stories
-router.get('/stories', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const stories = await Story.find({});
     res.send({stories});
@@ -12,7 +27,7 @@ router.get('/stories', async (req, res) => {
   }
 });
 
-router.get('/stories/:title', async (req, res) => {
+router.get('/:title', async (req, res) => {
   let title = req.params.title
   try {
     const story = await Story.findOne({title: title});
@@ -44,7 +59,7 @@ router.get('/:title/edit', async (req, res) => {
 })
 
 // POST/stories
-router.post('/stories', async (req, res) => {
+router.post('/', async (req, res) => {
   const story = new Story(req.body);
 
   try {
@@ -56,7 +71,7 @@ router.post('/stories', async (req, res) => {
 });
 
 // DELETE/stories/:id
-router.delete('/stories/:id', async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     const story = await Story.findByIdAndDelete(req.params.id);
 
@@ -71,7 +86,7 @@ router.delete('/stories/:id', async (req, res) => {
 });
 
 // PATCH/stories/:title
-router.patch('/stories/:id', async (req, res) => {
+router.patch('/:id', async (req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = ['title', 'body'];
   const isValidOperation = updates.every((update) => allowedUpdates.includes(update));

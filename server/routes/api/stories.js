@@ -96,7 +96,11 @@ router.patch('/:id', async (req, res) => {
   }
 
   try {
-    const story = await Story.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true});
+    const story = await Story.findById(req.params.id);
+
+    updates.forEach((update) => story[update] = req.body[update]);
+
+    await story.save();
 
     if (!story) {
       return res.status(404).send();

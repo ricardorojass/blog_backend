@@ -71,7 +71,7 @@ router.delete('/:id', async (req, res) => {
 // PATCH/stories/:title
 router.patch('/:id', async (req, res) => {
   const updates = Object.keys(req.body);
-  const allowedUpdates = ['username', 'email'];
+  const allowedUpdates = ['username', 'email', 'password'];
   const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
 
   if (!isValidOperation) {
@@ -79,7 +79,12 @@ router.patch('/:id', async (req, res) => {
   }
 
   try {
-    const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true});
+
+    const user = await User.findById(req.params.id);
+
+    updates.forEach((update) => user[update] = req.body[update]);
+
+    await user.save();
 
     if (!user) {
       return res.status(404).send();

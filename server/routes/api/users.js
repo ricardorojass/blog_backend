@@ -5,15 +5,37 @@ const router = new express.Router();
 // Preload user objects on routes with ':users'
 router.param('users', async (req, res, next, slug) => {
   try {
-    const story = await Story.findById(req.params.id);
+    const user = await User.findById(req.params.id);
 
-    if (!story) { return res.status(404); }
+    if (!user) { return res.status(404); }
 
-    req.story = story;
+    req.user = user;
 
     return next();
   } catch (e) {
     return next(e);
+  }
+});
+
+// POST/users
+router.post('/', async (req, res) => {
+  const user = new User(req.body);
+
+  try {
+    await user.save()
+    res.status(201).send(user);
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
+// POST/users/login
+router.post('/login', async (req, res) => {
+  try {
+    const user = await User.findByCredentials(req.body.email, req.body.password);
+    res.send(user);
+  } catch (e) {
+    res.status(400).send();
   }
 });
 
@@ -39,18 +61,6 @@ router.get('/:id', async (req, res) => {
   } catch (e) {
     res.status(500).send();
   }
-})
-
-// POST/users
-router.post('/', async (req, res) => {
-  const user = new User(req.body);
-
-  try {
-    await user.save()
-    res.status(201).send(user);
-  } catch (e) {
-    res.status(400).send(e);
-  }
 });
 
 // DELETE/users/:id
@@ -68,7 +78,7 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// PATCH/stories/:title
+// PATCH/users/:id
 router.patch('/:id', async (req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = ['username', 'email', 'password'];

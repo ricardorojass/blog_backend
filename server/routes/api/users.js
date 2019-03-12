@@ -1,5 +1,6 @@
 const express = require('express');
 const {User} = require('../../models/User');
+const auth = require('../../middleware/auth');
 const router = new express.Router();
 
 // Preload user objects on routes with ':users'
@@ -42,7 +43,7 @@ router.post('/login', async (req, res) => {
 });
 
 // GET/users
-router.get('/', async (req, res) => {
+router.get('/', auth, async (req, res) => {
   try {
     const users = await User.find({});
     res.send({users});

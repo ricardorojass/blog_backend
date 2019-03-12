@@ -42,7 +42,7 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// POST/users/logout
+// POST/users/logout for one session
 router.post('/logout', auth, async (req, res) => {
   try {
     req.user.tokens = req.user.tokens.filter((token) => {
@@ -55,7 +55,7 @@ router.post('/logout', auth, async (req, res) => {
   }
 });
 
-// POST/users/logoutAll
+// POST/users/logoutAll for all sessions
 router.post('/logoutAll', auth, async (req, res) => {
   try {
     req.user.tokens = []
@@ -67,13 +67,8 @@ router.post('/logoutAll', auth, async (req, res) => {
 })
 
 // GET/users
-router.get('/', auth, async (req, res) => {
-  try {
-    const users = await User.find({});
-    res.send({users});
-  } catch (e) {
-    res.status(400).send(e);
-  }
+router.get('/me', auth, async (req, res) => {
+    res.send(req.user);
 });
 
 // GET/users/:id

@@ -4,7 +4,7 @@ const pwd = 'Ricardo123..'
 
 mongoose.connect(
   process.env.MONGODB_URI ||
-  `mongodb://${user}:${pwd}@ds255005.mlab.com:55005/blog-ricardo`, (err) => {
+  `mongodb://${user}:${pwd}@ds147592.mlab.com:47592/blog-ricardo`, (err) => {
   if(!err)
     console.log('connected to mongo');
 });

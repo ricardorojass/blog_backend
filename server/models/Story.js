@@ -11,6 +11,11 @@ const Story = mongoose.model('Story', {
     type: String,
     required: true,
   },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'User'
+  },
   createdAt: {
     type: Number,
     default: null,

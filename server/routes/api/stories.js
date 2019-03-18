@@ -1,5 +1,6 @@
 const express = require('express');
 const {Story} = require('../../models/Story');
+const auth = require('../../middleware/auth');
 const router = new express.Router();
 
 // Preload article objects on routes with ':article'
@@ -14,6 +15,21 @@ router.param('stories', async (req, res, next, slug) => {
     return next();
   } catch (e) {
     return next(e);
+  }
+});
+
+// POST/stories
+router.post('/', auth, async (req, res) => {
+  const story = new Story({
+    ...req.body,
+    owner: req.user._id
+  })
+
+  try {
+    await story.save()
+    res.status(201).send(story);
+  } catch (e) {
+    res.status(400).send(e);
   }
 });
 
@@ -58,33 +74,6 @@ router.get('/:title/edit', async (req, res) => {
   }
 })
 
-// POST/stories
-router.post('/', async (req, res) => {
-  const story = new Story(req.body);
-
-  try {
-    await story.save()
-    res.status(201).send(story);
-  } catch (e) {
-    res.status(400).send(e);
-  }
-});
-
-// DELETE/stories/:id
-router.delete('/:id', async (req, res) => {
-  try {
-    const story = await Story.findByIdAndDelete(req.params.id);
-
-    if (!story) {
-      return res.status(404).send();
-    }
-
-    res.send(story);
-  } catch (e) {
-    res.status(500).send();
-  }
-});
-
 // PATCH/stories/:title
 router.patch('/:id', async (req, res) => {
   const updates = Object.keys(req.body);
@@ -109,6 +98,21 @@ router.patch('/:id', async (req, res) => {
     res.send(story);
   } catch (e) {
     res.status(400).send(e);
+  }
+});
+
+// DELETE/stories/:id
+router.delete('/:id', async (req, res) => {
+  try {
+    const story = await Story.findByIdAndDelete(req.params.id);
+
+    if (!story) {
+      return res.status(404).send();
+    }
+
+    res.send(story);
+  } catch (e) {
+    res.status(500).send();
   }
 });
 

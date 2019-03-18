@@ -34,19 +34,19 @@ router.post('/', auth, async (req, res) => {
 });
 
 // GET/stories
-router.get('/', async (req, res) => {
+router.get('/', auth, async (req, res) => {
   try {
-    const stories = await Story.find({});
-    res.send({stories});
+    await req.user.populate('stories').execPopulate()
+    res.send(req.user.stories)
   } catch (e) {
-    res.status(400).send(e);
+    res.status(400).send(e)
   }
 });
 
-router.get('/:title', async (req, res) => {
-  let title = req.params.title
+router.get('/:id', auth, async (req, res) => {
+  let _id = req.params.id
   try {
-    const story = await Story.findOne({title: title});
+    const story = await Story.findOne({ _id, owner: req.user._id })
 
     if (!story) {
       return res.status(404).send();
@@ -75,36 +75,34 @@ router.get('/:title/edit', async (req, res) => {
 })
 
 // PATCH/stories/:title
-router.patch('/:id', async (req, res) => {
-  const updates = Object.keys(req.body);
-  const allowedUpdates = ['title', 'body'];
-  const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
+router.patch('/:id', auth, async (req, res) => {
+  const updates = Object.keys(req.body)
+  const allowedUpdates = ['title', 'body']
+  const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
 
   if (!isValidOperation) {
-    return res.status(400).send({ error: 'Invalid updates!' });
+    return res.status(400).send({ error: 'Invalid updates!' })
   }
 
   try {
-    const story = await Story.findById(req.params.id);
-
-    updates.forEach((update) => story[update] = req.body[update]);
-
-    await story.save();
+    const story = await Story.findOne({ _id: req.params.id, owner: req.user._id })
 
     if (!story) {
-      return res.status(404).send();
+      return res.status(404).send()
     }
 
-    res.send(story);
+    updates.forEach((update) => story[update] = req.body[update])
+    await story.save()
+    res.send(story)
   } catch (e) {
-    res.status(400).send(e);
+    res.status(400).send(e)
   }
 });
 
 // DELETE/stories/:id
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', auth, async (req, res) => {
   try {
-    const story = await Story.findByIdAndDelete(req.params.id);
+    const story = await Story.findOneAndDelete({ _id: req.params.id, owner: req.user.id })
 
     if (!story) {
       return res.status(404).send();

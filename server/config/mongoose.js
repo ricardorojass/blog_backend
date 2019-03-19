@@ -1,12 +1,14 @@
-const mongoose = require('mongoose');
-const user = 'admin'
-const pwd = 'Ricardo123..'
+const mongoose = require('mongoose')
+require('dotenv').config({ path: 'variables.env' })
 
-mongoose.connect(
-  process.env.MONGODB_URI ||
-  `mongodb://${user}:${pwd}@ds147592.mlab.com:47592/blog-ricardo`, (err) => {
-  if(!err)
-    console.log('connected to mongo');
-});
+// Connect to our database and handle an bad connections
+mongoose.connect(process.env.DATABASE, {
+  useCreateIndex: true,
+  useNewUrlParser: true
+})
+mongoose.Promise = global.Promise // tell Mongoose to use ES6 promises
+mongoose.connection.on('error', (err) => {
+  console.error(`🐽 🚫 🐽 🚫 🐽 🚫 🐽 🚫 ➡️ ${err.message}`)
+})
 
-module.exports = {mongoose};
+module.exports = {mongoose}

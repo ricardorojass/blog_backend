@@ -22,9 +22,9 @@ app.use(express.json())
 app.use(require('./routes'))
 
 
-
-app.listen(port, () => {
-  console.log(`Started on port ${port}`)
+app.set('port', port)
+const server = app.listen(app.get('port'), () => {
+  console.log(`Express running ➡️  ➡️  ➡️PORT ${server.address().port}`)
 })
 
 module.exports = {app}

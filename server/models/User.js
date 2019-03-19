@@ -1,6 +1,7 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose')
+const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
+const Story = require('./Story')
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -81,13 +82,19 @@ userSchema.statics.findByCredentials = async (email, password) => {
 // Hash the plain text password before saving
 userSchema.pre('save', async function(next) {
   const user = this;
-
   if (user.isModified('password')) {
     user.password = await bcrypt.hash(user.password, 8);
   }
 
   next();
 });
+
+// Delete user stories when user is removed
+userSchema.pre('remove', async function(next) {
+  const user = this
+  await Story.deleteMany({ owner: user._id })
+  next()
+})
 
 const User = mongoose.model('User', userSchema);
 

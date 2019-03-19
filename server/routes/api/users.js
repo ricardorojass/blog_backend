@@ -85,21 +85,6 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// DELETE/users/:id
-router.delete('/:id', async (req, res) => {
-  try {
-    const user = await User.findByIdAndDelete(req.params.id);
-
-    if (!user) {
-      return res.status(404).send();
-    }
-
-    res.send(user);
-  } catch (e) {
-    res.status(500).send();
-  }
-});
-
 // PATCH/users/:id
 router.patch('/me', auth, async (req, res) => {
   const updates = Object.keys(req.body)
@@ -120,5 +105,15 @@ router.patch('/me', auth, async (req, res) => {
     res.status(400).send(e)
   }
 });
+
+// DELETE/users/me
+router.delete('/me', auth, async (req, res) => {
+  try {
+    await req.user.remove()
+    res.send(req.user)
+  } catch (e) {
+    res.status(500).send()
+  }
+})
 
 module.exports = router

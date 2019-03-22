@@ -1,7 +1,8 @@
-const express = require('express');
-const {User} = require('../../models/User');
-const auth = require('../../middleware/auth');
-const router = new express.Router();
+const express = require('express')
+const {User} = require('../../models/User')
+const auth = require('../../middleware/auth')
+const router = new express.Router()
+const passport = require('passport')
 
 // Preload user objects on routes with ':users'
 router.param('/user', auth, async (req, res, next, slug) => {
@@ -20,23 +21,32 @@ router.param('/user', auth, async (req, res, next, slug) => {
 
 // POST/users
 router.post('/', async (req, res) => {
-  const user = new User(req.body);
+  const user = new User(req.body)
+  console.log(user);
+
 
   try {
+    user.setPassword(req.body.password)
+
     await user.save()
-    const token = await user.generateAuthToken();
-    res.send({ user, token });
+
+    res.send({ user: user.toAuthJSON() })
   } catch (e) {
-    res.status(400).send(e);
+    res.status(400).send(e)
   }
-});
+})
 
 // POST/users/login
-router.post('/login', async (req, res) => {
+router.post('/login', async (req, res, next) => {
   try {
-    const user = await User.findByCredentials(req.body.user.email, req.body.user.password);
-    const token = await user.generateAuthToken();
-    res.send({ user, token });
+    passport.authenticate('local', {session: false}, function(err, user, info) {
+      if(err){ return next(err) }
+
+      if(!user){ return res.status(422).send(info) }
+
+      user.token = user.generateJWT();
+      return res.json({user: user.toAuthJSON()})
+    })(req, res, next)
   } catch (e) {
     res.status(400).send();
   }

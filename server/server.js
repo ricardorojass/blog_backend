@@ -2,11 +2,14 @@ const cool = require('cool-ascii-faces')
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
+const session = require('express-session')
+const passport = require('passport')
 
 const app = express()
 const port = process.env.PORT || 3000
 
 require('./config/mongoose')
+require('./config/passport')
 
 // Without middleware: new request -> run route handler
 
@@ -19,6 +22,12 @@ require('./config/mongoose')
 app.use(morgan('dev'))
 app.use(cors())
 app.use(express.json())
+app.use(session({
+  secret: 'conduit',
+  cookie: { maxAge: 60000 },
+  resave: false,
+  saveUninitialized: false
+}));
 app.use(require('./routes'))
 
 

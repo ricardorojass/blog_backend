@@ -34,19 +34,25 @@ router.post('/', auth, async (req, res) => {
 });
 
 // GET/stories
-router.get('/', auth, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    await req.user.populate('stories').execPopulate()
-    res.send(req.user.stories)
+    // await req.user.populate('stories').execPopulate()
+    const stories = await Story.find({})
+
+    if (!stories) {
+      return res.status(404).send()
+    }
+
+    res.send({stories})
   } catch (e) {
     res.status(400).send(e)
   }
 });
 
-router.get('/:id', auth, async (req, res) => {
+router.get('/:id', async (req, res) => {
   let _id = req.params.id
   try {
-    const story = await Story.findOne({ _id, owner: req.user._id })
+    const story = await Story.findById(_id)
 
     if (!story) {
       return res.status(404).send();

@@ -4,7 +4,7 @@ const auth = require('../../middleware/auth');
 const router = new express.Router();
 
 // Preload user objects on routes with ':users'
-router.param('users', async (req, res, next, slug) => {
+router.param('/user', auth, async (req, res, next, slug) => {
   try {
     const user = await User.findById(req.params.id);
 
@@ -34,7 +34,7 @@ router.post('/', async (req, res) => {
 // POST/users/login
 router.post('/login', async (req, res) => {
   try {
-    const user = await User.findByCredentials(req.body.email, req.body.password);
+    const user = await User.findByCredentials(req.body.user.email, req.body.user.password);
     const token = await user.generateAuthToken();
     res.send({ user, token });
   } catch (e) {

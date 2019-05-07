@@ -19,7 +19,7 @@ router.param('stories', async (req, res, next, slug) => {
 });
 
 // POST/stories
-router.post('/', auth, async (req, res) => {
+router.post('/', auth.required, async (req, res) => {
   const story = new Story({
     ...req.body,
     owner: req.user._id
@@ -80,8 +80,10 @@ router.get('/:title/edit', async (req, res) => {
   }
 })
 
-// PATCH/stories/:title
-router.patch('/:id', auth, async (req, res) => {
+// PATCH/stories/:id
+router.patch('/:id', auth.required, async (req, res) => {
+  console.log(req.body);
+
   const updates = Object.keys(req.body)
   const allowedUpdates = ['title', 'body']
   const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
@@ -106,7 +108,7 @@ router.patch('/:id', auth, async (req, res) => {
 });
 
 // DELETE/stories/:id
-router.delete('/:id', auth, async (req, res) => {
+router.delete('/:id', auth.required, async (req, res) => {
   try {
     const story = await Story.findOneAndDelete({ _id: req.params.id, owner: req.user.id })
 

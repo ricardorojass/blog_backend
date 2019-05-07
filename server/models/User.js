@@ -1,39 +1,17 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const crypto = require('crypto')
 const Story = require('./Story')
+const secret = require('../config').secret
 
 const userSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  email: {
-    type: String,
-    unique: true,
-    required: true,
-    trim: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  tokens: [{
-    token: {
-      type: String,
-      required: true
-    }
-  }],
-  createdAt: {
-    type: Number,
-    default: null,
-  },
-  updatedAt: {
-    type: Number,
-    default: null,
-  },
-})
+  username: {type: String, required: true, trim: true},
+  email: {type: String, unique: true, required: true, trim: true},
+  image: String,
+  hash: String,
+  salt: String,
+}, {timestamps: true})
 
 userSchema.virtual('stories', {
   ref: 'Story',
@@ -51,33 +29,64 @@ userSchema.methods.toJSON = function () {
   return userObject
 }
 
-// Access from instance
-userSchema.methods.generateAuthToken = async function () {
-  const user = this;
-  const token = jwt.sign({ _id: user.id.toString() }, 'thisismyblog');
-
-  user.tokens = user.tokens.concat({ token });
-  await user.save();
-
-  return token;
+userSchema.methods.validPassword = function(password) {
+  const user = this
+  const hash = crypto.pbkdf2Sync(password, this.salt, 10000, 512, 'sha512').toString('hex')
+  return user.hash === hash
 }
+
+userSchema.methods.setPassword = function(password){
+  const user = this
+  user.salt = crypto.randomBytes(16).toString('hex')
+  user.hash = crypto.pbkdf2Sync(password, user.salt, 10000, 512, 'sha512').toString('hex')
+}
+
+// Methods can access from instance
+userSchema.methods.generateJWT = function() {
+  const user = this
+  const today = new Date()
+  const exp = new Date(today)
+  exp.setDate(today.getDate() + 60)
+
+  return jwt.sign({
+    id: user._id,
+    username: user.username,
+    exp: parseInt(exp.getTime() / 1000),
+  }, secret)
+}
+
+userSchema.methods.toAuthJSON = function(){
+  const user = this
+  return {
+    username: user.username,
+    email: user.email,
+    token: user.generateJWT(),
+    image: user.image
+  };
+}
+
+userSchema.methods.toProfileJSONFor = function(user){
+  return {
+    username: this.username
+  };
+};
 
 // Access from model
-userSchema.statics.findByCredentials = async (email, password) => {
-  const user = await User.findOne({ email });
+// userSchema.statics.findByCredentials = async (email, password) => {
+//   const user = await User.findOne({ email });
 
-  if (!user) {
-    throw new Error('Unable to login');
-  }
+//   if (!user) {
+//     throw new Error('Unable to login');
+//   }
 
-  const isMatch = await bcrypt.compare(password, user.password);
+//   const isMatch = await bcrypt.compare(password, user.password);
 
-  if (!isMatch) {
-    throw new Error('Unable to login');
-  }
+//   if (!isMatch) {
+//     throw new Error('Unable to login');
+//   }
 
-  return user;
-}
+//   return user;
+// }
 
 // Hash the plain text password before saving
 userSchema.pre('save', async function(next) {

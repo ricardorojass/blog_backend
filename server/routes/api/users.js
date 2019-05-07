@@ -5,7 +5,7 @@ const router = new express.Router()
 const passport = require('passport')
 
 // Preload user objects on routes with ':users'
-router.param('/user', auth, async (req, res, next, slug) => {
+router.param('/user', auth.required, async (req, res, next) => {
   try {
     const user = await User.findById(req.params.id);
 
@@ -38,6 +38,14 @@ router.post('/', async (req, res) => {
 
 // POST/users/login
 router.post('/login', async (req, res, next) => {
+  if(!req.body.user.email){
+    return res.status(422).json({errors: {email: "can't be blank"}});
+  }
+
+  if(!req.body.user.password){
+    return res.status(422).json({errors: {password: "can't be blank"}});
+  }
+
   try {
     passport.authenticate('local', {session: false}, function(err, user, info) {
       if(err){ return next(err) }
@@ -53,7 +61,7 @@ router.post('/login', async (req, res, next) => {
 });
 
 // POST/users/logout for one session
-router.post('/logout', auth, async (req, res) => {
+router.post('/logout', auth.required, async (req, res) => {
   try {
     req.user.tokens = req.user.tokens.filter((token) => {
       return token.token !== req.token
@@ -66,7 +74,7 @@ router.post('/logout', auth, async (req, res) => {
 });
 
 // POST/users/logoutAll for all sessions
-router.post('/logoutAll', auth, async (req, res) => {
+router.post('/logoutAll', auth.required, async (req, res) => {
   try {
     req.user.tokens = []
     await req.user.save()
@@ -77,7 +85,7 @@ router.post('/logoutAll', auth, async (req, res) => {
 })
 
 // GET/users
-router.get('/me', auth, async (req, res) => {
+router.get('/me', auth.required, async (req, res) => {
     res.send(req.user);
 });
 
@@ -96,7 +104,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // PATCH/users/:id
-router.patch('/me', auth, async (req, res) => {
+router.patch('/me', auth.required, async (req, res) => {
   const updates = Object.keys(req.body)
   const allowedUpdates = ['username', 'email', 'password']
   const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
@@ -117,7 +125,7 @@ router.patch('/me', auth, async (req, res) => {
 });
 
 // DELETE/users/me
-router.delete('/me', auth, async (req, res) => {
+router.delete('/me', auth.required, async (req, res) => {
   try {
     await req.user.remove()
     res.send(req.user)

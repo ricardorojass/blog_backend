@@ -23,7 +23,7 @@ app.use(morgan('dev'))
 app.use(cors())
 app.use(express.json())
 app.use(session({
-  secret: 'conduit',
+  secret: 'secret',
   cookie: { maxAge: 60000 },
   resave: false,
   saveUninitialized: false

@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 require('dotenv').config({ path: 'variables.env' })
 
 // Connect to our database and handle an bad connections
-mongoose.connect(process.env.DATABASE, {
+mongoose.connect(process.env.MONGO_URI, {
   useCreateIndex: true,
   useNewUrlParser: true
 })

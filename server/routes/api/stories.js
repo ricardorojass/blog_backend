@@ -21,8 +21,8 @@ router.param('stories', async (req, res, next, slug) => {
 // POST/stories
 router.post('/', auth.required, async (req, res) => {
   const story = new Story({
-    ...req.body,
-    owner: req.user._id
+    ...req.body.article,
+    owner: req.payload.id
   })
 
   try {
@@ -82,24 +82,25 @@ router.get('/:title/edit', async (req, res) => {
 
 // PATCH/stories/:id
 router.patch('/:id', auth.required, async (req, res) => {
-  console.log(req.body);
-
-  const updates = Object.keys(req.body)
+  const updates = Object.keys(req.body.article)
   const allowedUpdates = ['title', 'body']
-  const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
+  const isValidOperation = updates.some((update) => {
+
+    return allowedUpdates.includes(update)
+  });
 
   if (!isValidOperation) {
     return res.status(400).send({ error: 'Invalid updates!' })
   }
 
   try {
-    const story = await Story.findOne({ _id: req.params.id, owner: req.user._id })
+    const story = await Story.findOne({ _id: req.params.id, owner: req.payload.id })
 
     if (!story) {
       return res.status(404).send()
     }
 
-    updates.forEach((update) => story[update] = req.body[update])
+    updates.forEach((update) => story[update] = req.body.article[update])
     await story.save()
     res.send(story)
   } catch (e) {

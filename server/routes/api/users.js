@@ -4,16 +4,14 @@ const auth = require('../../middleware/auth')
 const router = new express.Router()
 const passport = require('passport')
 
-// Preload user objects on routes with ':users'
-router.param('/user', auth.required, async (req, res, next) => {
+// GET/user
+router.get('/user', auth.required, async (req, res, next) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.payload.id);
 
     if (!user) { return res.status(404); }
 
-    req.user = user;
-
-    return next();
+    res.send({ user: user.toAuthJSON() })
   } catch (e) {
     return next(e);
   }
@@ -22,9 +20,6 @@ router.param('/user', auth.required, async (req, res, next) => {
 // POST/users
 router.post('/', async (req, res) => {
   const user = new User(req.body)
-  console.log(user);
-
-
   try {
     user.setPassword(req.body.password)
 
@@ -86,7 +81,7 @@ router.post('/logoutAll', auth.required, async (req, res) => {
 
 // GET/users
 router.get('/me', auth.required, async (req, res) => {
-    res.send(req.user);
+  res.send(req.user);
 });
 
 // GET/users/:id
